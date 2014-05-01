@@ -5,6 +5,7 @@ public class Simulator {
     private ArrayList<ArrayList<Integer>> grid = new ArrayList<ArrayList<Integer>>();
     private int nextTile;
     private int balanceOneTwo;
+    private int score;
 
     @SuppressWarnings("unchecked")
     public Simulator()
@@ -41,6 +42,8 @@ public class Simulator {
             ArrayList<Integer> current = grid.get(i);
             for(int j=0;j<3;++j)
                 if(!changed[i] && ((current.get(j).equals(current.get(j+1)) && current.get(j)>2) || (current.get(j)+current.get(j+1)==3) || current.get(j)==0)) {
+                    if ((current.get(j).equals(current.get(j+1)) && current.get(j)>2) || (current.get(j)+current.get(j+1)==3))
+                        score+=Math.pow(3,Math.log((current.get(j)+current.get(j+1))/3)/Math.log(2)+1);
                     current.set(j, current.get(j)+current.get(j+1));
                     changed[i] = true;
                 } else if(changed[i]){
@@ -69,6 +72,8 @@ public class Simulator {
             ArrayList<Integer> current = grid.get(i);
             for(int j=3;j>0;--j)
                 if(!changed[i] && ((current.get(j).equals(current.get(j-1)) && current.get(j)>2) || (current.get(j)+current.get(j-1)==3) || current.get(j)==0)) {
+                    if ((current.get(j).equals(current.get(j-1)) && current.get(j)>2) || (current.get(j)+current.get(j-1)==3))
+                        score+=Math.pow(3,Math.log((current.get(j)+current.get(j-1))/3)/Math.log(2)+1);
                     current.set(j, current.get(j)+current.get(j-1));
                     changed[i] = true;
                 } else if(changed[i]){
@@ -96,6 +101,8 @@ public class Simulator {
         {
             for(int i=0;i<3;++i)
                 if(!changed[j] && ((grid.get(i).get(j).equals(grid.get(i+1).get(j)) && grid.get(i).get(j)>2) || (grid.get(i).get(j)+grid.get(i+1).get(j)==3) || grid.get(i).get(j)==0)) {
+                    if ((grid.get(i).get(j).equals(grid.get(i+1).get(j)) && grid.get(i).get(j)>2) || (grid.get(i).get(j)+grid.get(i+1).get(j)==3))
+                        score+=Math.pow(3,Math.log((grid.get(i).get(j)+grid.get(i+1).get(j))/3)/Math.log(2)+1);
                     grid.get(i).set(j, grid.get(i).get(j) + grid.get(i + 1).get(j));
                     changed[j] = true;
                 } else if(changed[j]){
@@ -122,6 +129,8 @@ public class Simulator {
         {
             for(int i=3;i>0;--i)
                 if(!changed[j] && ((grid.get(i).get(j).equals(grid.get(i-1).get(j)) && grid.get(i).get(j)>2) || (grid.get(i).get(j)+grid.get(i-1).get(j)==3) || grid.get(i).get(j)==0)) {
+                    if ((grid.get(i).get(j).equals(grid.get(i-1).get(j)) && grid.get(i).get(j)>2) || (grid.get(i).get(j)+grid.get(i-1).get(j)==3))
+                        score+=Math.pow(3,Math.log((grid.get(i).get(j)+grid.get(i-1).get(j))/3)/Math.log(2)+1);
                     grid.get(i).set(j, grid.get(i).get(j)+grid.get(i-1).get(j));
                     changed[j] = true;
                 } else if(changed[j]){
@@ -146,6 +155,8 @@ public class Simulator {
     }
 
     public int getNextTile() { return nextTile; }
+
+    public int getScore() { return score; }
 
     //checks if grid is alive
     public boolean isAlive()
