@@ -51,13 +51,15 @@ public class Simulator {
             if(changed[i]) {current.set(3,0);}
             grid.set(i,current);
         }
-        //add new tile
-        int newTileLocation;
-        do{
-            newTileLocation = (int)(Math.random()*4);
-        } while (!changed[newTileLocation]);
-        grid.get(newTileLocation).set(3,nextTile);
-        nextTile = randomTile();
+        //add new tile if the grid was changed
+        if(changed[0] || changed[1] || changed[2] || changed[3]) {
+            int newTileLocation;
+            do{
+                newTileLocation = (int)(Math.random()*4);
+            } while (!changed[newTileLocation]);
+            grid.get(newTileLocation).set(3,nextTile);
+            nextTile = randomTile();
+        }
     }
 
     public void moveRight()
@@ -78,12 +80,14 @@ public class Simulator {
             grid.set(i,current);
         }
         //add new tile
-        int newTileLocation;
-        do{
-            newTileLocation = (int)(Math.random()*4);
-        } while (!changed[newTileLocation]);
-        grid.get(newTileLocation).set(0,nextTile);
-        nextTile = randomTile();
+        if(changed[0] || changed[1] || changed[2] || changed[3]) {
+            int newTileLocation;
+            do{
+                newTileLocation = (int)(Math.random()*4);
+            } while (!changed[newTileLocation]);
+            grid.get(newTileLocation).set(0,nextTile);
+            nextTile = randomTile();
+        }
     }
 
     public void moveUp()
@@ -94,20 +98,22 @@ public class Simulator {
         {
             for(int i=0;i<3;++i)
                 if(!changed[j] && ((grid.get(i).get(j) == grid.get(i+1).get(j) && grid.get(i).get(j)>2) || (grid.get(i).get(j)+grid.get(i+1).get(j)==3) || grid.get(i).get(j)==0)) {
-                    grid.get(i).set(j, grid.get(i).get(j)+grid.get(i+1).get(j));
+                    grid.get(i).set(j, grid.get(i).get(j) + grid.get(i + 1).get(j));
                     changed[j] = true;
                 } else if(changed[j]){
-                    grid.get(i).set(j, grid.get(i+1).get(j));
+                    grid.get(i).set(j, grid.get(i + 1).get(j));
                 }
-            if(changed[j]) {grid.get(3).set(j,0);}
+            if(changed[j]) {grid.get(3).set(j, 0);}
         }
         //add new tile
-        int newTileLocation;
-        do{
-            newTileLocation = (int)(Math.random()*4);
-        } while (!changed[newTileLocation]);
-        grid.get(3).set(newTileLocation,nextTile);
-        nextTile = randomTile();
+        if(changed[0] || changed[1] || changed[2] || changed[3]) {
+            int newTileLocation;
+            do{
+                newTileLocation = (int)(Math.random()*4);
+            } while (!changed[newTileLocation]);
+            grid.get(3).set(newTileLocation,nextTile);
+            nextTile = randomTile();
+        }
     }
 
     public void moveDown()
@@ -126,12 +132,14 @@ public class Simulator {
             if(changed[j]) {grid.get(0).set(j,0);}
         }
         //add new tile
-        int newTileLocation;
-        do{
-            newTileLocation = (int)(Math.random()*4);
-        } while (!changed[newTileLocation]);
-        grid.get(0).set(newTileLocation,nextTile);
-        nextTile = randomTile();
+        if(changed[0] || changed[1] || changed[2] || changed[3]) {
+            int newTileLocation;
+            do{
+                newTileLocation = (int)(Math.random()*4);
+            } while (!changed[newTileLocation]);
+            grid.get(0).set(newTileLocation,nextTile);
+            nextTile = randomTile();
+        }
     }
 
     public ArrayList<ArrayList<Integer>> getThreesGrid()
@@ -141,10 +149,29 @@ public class Simulator {
 
     public int getNextTile() { return nextTile; }
 
-    public boolean ifLive()
+    //checks if grid is alive
+    public boolean isAlive()
     {
-        //checks if grid is alive
-        return true;
+        boolean live = false;
+        for(int i=0; i<4; ++i)
+        {
+            ArrayList<Integer> current = grid.get(i);
+            for(int j = 0; j < 3; ++j)
+                if((current.get(j) == current.get(j+1) && current.get(j)>2) || (current.get(j)+current.get(j+1)==3) || current.get(j)==0) {
+                    live = true;
+                    break;
+                }
+        }
+        if(!live) {
+            for(int j=0; j<4; ++j) {
+                for (int i = 0; i < 3; ++i)
+                    if (((grid.get(i).get(j) == grid.get(i + 1).get(j) && grid.get(i).get(j) > 2) || (grid.get(i).get(j) + grid.get(i + 1).get(j) == 3) || grid.get(i).get(j) == 0)) {
+                        live = true;
+                        break;
+                    }
+            }
+        }
+        return live;
     }
 
     private int randomTile()
