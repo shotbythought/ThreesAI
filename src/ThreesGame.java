@@ -25,46 +25,42 @@ public class ThreesGame extends Canvas {
     }
 
     public void paint(Graphics g) {
+        g.setFont(new Font("Helvetica",Font.BOLD, 30));
         for(int i = 0; i<4; ++i)
         {
             for(int j = 0; j<4; ++j)
             {
                 int value = sim.getThreesGrid().get(i).get(j);
-                Color color;
-                if (value == 0) {
-                    color = Color.WHITE;
-                } else if (value == 1) {
-                    color = Color.BLUE;
-                } else if (value == 2) {
-                    color = Color.RED;
-                } else {
-                    color = Color.YELLOW;
-                }
-                g.setColor(color);
+                g.setColor(getTileColor(value));
                 g.fillRect(BOX_SIZE*j,BOX_SIZE*i,BOX_SIZE,BOX_SIZE);
                 g.setColor(Color.BLACK);
-                g.drawString(value+"",BOX_SIZE*j+BOX_SIZE/2,BOX_SIZE*i+BOX_SIZE/2);
+                if (value != 0) {
+                    g.drawString(value + "", BOX_SIZE * j + BOX_SIZE / 2, BOX_SIZE * i + BOX_SIZE / 2);
+                }
             }
         }
         int value = sim.getNextTile();
-        Color color;
-        if (value == 0) {
-            color = Color.WHITE;
-        } else if (value == 1) {
-            color = Color.BLUE;
-        } else if (value == 2) {
-            color = Color.RED;
-        } else {
-            color = Color.YELLOW;
-        }
-        g.setColor(color);
+        g.setColor(getTileColor(value));
         g.fillRect(BOX_SIZE*4+10,0,BOX_SIZE,BOX_SIZE);
         g.setColor(Color.BLACK);
         g.drawString(value+"",WIDTH-BOX_SIZE+BOX_SIZE/2,BOX_SIZE/2);
-
-        if(!running)
+        g.drawString(sim.getScore()+"",WIDTH-BOX_SIZE+BOX_SIZE/2,BOX_SIZE*3/2);
+        if(!sim.isAlive())
         {
             g.drawString("YOU LOST",WIDTH/2,HEIGHT/2);
+        }
+    }
+
+    private Color getTileColor(int value)
+    {
+        if (value == 0) {
+            return new Color(182,217,217);
+        } else if (value == 1) {
+            return new Color(102,204,255);
+        } else if (value == 2) {
+            return new Color(255,102,128);
+        } else {
+            return Color.WHITE;
         }
     }
 
@@ -82,18 +78,16 @@ public class ThreesGame extends Canvas {
             case KeyEvent.VK_RIGHT:
                 sim.moveRight();
                 break;
+            case KeyEvent.VK_R:
+                sim = new Simulator();
+                break;
         }
         repaint();
-        if(!sim.isAlive())
-        {
-            running = false;
-        }
     }
 
     public static void main(String[] args) {
         JFrame frame = new JFrame(TITLE);
         ThreesGame gm = new ThreesGame();
-
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add(gm);
         frame.pack();
