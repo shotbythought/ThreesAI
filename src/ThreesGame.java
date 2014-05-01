@@ -11,7 +11,6 @@ public class ThreesGame extends Canvas {
     public static final String TITLE = "Threes";
 
     Simulator sim;
-    boolean running = true;
 
     public ThreesGame() {
         sim = new Simulator();
