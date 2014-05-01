@@ -1,12 +1,10 @@
 import java.util.*;
 
-/**
- * Created by Student on 4/16/2014.
- */
 public class Simulator {
 
     private ArrayList<ArrayList<Integer>> grid = new ArrayList<ArrayList<Integer>>();
     private int nextTile;
+    private int balanceOneTwo;
 
     @SuppressWarnings("unchecked")
     public Simulator()
@@ -42,7 +40,7 @@ public class Simulator {
         {
             ArrayList<Integer> current = grid.get(i);
             for(int j=0;j<3;++j)
-                if(!changed[i] && ((current.get(j) == current.get(j+1) && current.get(j)>2) || (current.get(j)+current.get(j+1)==3) || current.get(j)==0)) {
+                if(!changed[i] && ((current.get(j).equals(current.get(j+1)) && current.get(j)>2) || (current.get(j)+current.get(j+1)==3) || current.get(j)==0)) {
                     current.set(j, current.get(j)+current.get(j+1));
                     changed[i] = true;
                 } else if(changed[i]){
@@ -70,7 +68,7 @@ public class Simulator {
         {
             ArrayList<Integer> current = grid.get(i);
             for(int j=3;j>0;--j)
-                if(!changed[i] && ((current.get(j) == current.get(j-1) && current.get(j)>2) || (current.get(j)+current.get(j-1)==3) || current.get(j)==0)) {
+                if(!changed[i] && ((current.get(j).equals(current.get(j-1)) && current.get(j)>2) || (current.get(j)+current.get(j-1)==3) || current.get(j)==0)) {
                     current.set(j, current.get(j)+current.get(j-1));
                     changed[i] = true;
                 } else if(changed[i]){
@@ -97,7 +95,7 @@ public class Simulator {
         for(int j=0; j<4; ++j)
         {
             for(int i=0;i<3;++i)
-                if(!changed[j] && ((grid.get(i).get(j) == grid.get(i+1).get(j) && grid.get(i).get(j)>2) || (grid.get(i).get(j)+grid.get(i+1).get(j)==3) || grid.get(i).get(j)==0)) {
+                if(!changed[j] && ((grid.get(i).get(j).equals(grid.get(i+1).get(j)) && grid.get(i).get(j)>2) || (grid.get(i).get(j)+grid.get(i+1).get(j)==3) || grid.get(i).get(j)==0)) {
                     grid.get(i).set(j, grid.get(i).get(j) + grid.get(i + 1).get(j));
                     changed[j] = true;
                 } else if(changed[j]){
@@ -123,7 +121,7 @@ public class Simulator {
         for(int j=0; j<4; ++j)
         {
             for(int i=3;i>0;--i)
-                if(!changed[j] && ((grid.get(i).get(j) == grid.get(i-1).get(j) && grid.get(i).get(j)>2) || (grid.get(i).get(j)+grid.get(i-1).get(j)==3) || grid.get(i).get(j)==0)) {
+                if(!changed[j] && ((grid.get(i).get(j).equals(grid.get(i-1).get(j)) && grid.get(i).get(j)>2) || (grid.get(i).get(j)+grid.get(i-1).get(j)==3) || grid.get(i).get(j)==0)) {
                     grid.get(i).set(j, grid.get(i).get(j)+grid.get(i-1).get(j));
                     changed[j] = true;
                 } else if(changed[j]){
@@ -157,7 +155,7 @@ public class Simulator {
         {
             ArrayList<Integer> current = grid.get(i);
             for(int j = 0; j < 3; ++j)
-                if((current.get(j) == current.get(j+1) && current.get(j)>2) || (current.get(j)+current.get(j+1)==3) || current.get(j)==0) {
+                if((current.get(j).equals(current.get(j+1)) && current.get(j)>2) || (current.get(j)+current.get(j+1)==3) || current.get(j)==0) {
                     live = true;
                     break;
                 }
@@ -165,7 +163,7 @@ public class Simulator {
         if(!live) {
             for(int j=0; j<4; ++j) {
                 for (int i = 0; i < 3; ++i)
-                    if (((grid.get(i).get(j) == grid.get(i + 1).get(j) && grid.get(i).get(j) > 2) || (grid.get(i).get(j) + grid.get(i + 1).get(j) == 3) || grid.get(i).get(j) == 0)) {
+                    if (((grid.get(i).get(j).equals(grid.get(i + 1).get(j)) && grid.get(i).get(j) > 2) || (grid.get(i).get(j) + grid.get(i + 1).get(j) == 3) || grid.get(i).get(j) == 0)) {
                         live = true;
                         break;
                     }
@@ -176,6 +174,20 @@ public class Simulator {
 
     private int randomTile()
     {
-        return (int)(Math.random()*3) + 1;
+        int value;
+        if(balanceOneTwo<-1)
+        {
+            value = (int)(Math.random()*2)+2;
+        } else if(balanceOneTwo>1) {
+            value = (int)(Math.random()*2)*2+1;
+        } else {
+            value = (int)(Math.random()*3) + 1;
+        }
+        if(value == 1) {
+            --balanceOneTwo;
+        } else if(value == 2) {
+            ++balanceOneTwo;
+        }
+        return value;
     }
 }
