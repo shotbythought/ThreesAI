@@ -6,6 +6,7 @@ public class Simulator {
     private int nextTile;
     private int balanceOneTwo;
     private int score;
+    private Deque<ArrayList<ArrayList<Integer>>> undoStack = new ArrayDeque<ArrayList<ArrayList<Integer>>>();
 
     @SuppressWarnings("unchecked")
     public Simulator()
@@ -30,6 +31,7 @@ public class Simulator {
             grid.get(current/4).set(current%4,randomTile());
         }
         nextTile = randomTile();
+        undoStack.push(grid);
     }
 
     //CHANGE THESE
@@ -39,18 +41,23 @@ public class Simulator {
         //shifts everything left
         for(int i=0; i<4; ++i)
         {
-            ArrayList<Integer> current = grid.get(i);
-            for(int j=0;j<3;++j)
-                if(!changed[i] && ((current.get(j).equals(current.get(j+1)) && current.get(j)>2) || (current.get(j)+current.get(j+1)==3) || current.get(j)==0)) {
-                    if ((current.get(j).equals(current.get(j+1)) && current.get(j)>2) || (current.get(j)+current.get(j+1)==3))
-                        score+=Math.pow(3,Math.log((current.get(j)+current.get(j+1))/3)/Math.log(2)+1);
-                    current.set(j, current.get(j)+current.get(j+1));
+            for(int j=0;j<3;++j) {
+                Integer currentSquare = grid.get(i).get(j);
+                Integer nextSquare = grid.get(i).get(j + 1);
+                Integer additionSquare = nextSquare + currentSquare;
+                if (!changed[i] && ((additionSquare%3 == 0 && isPowerOfTwo((additionSquare)/3)) || (currentSquare == 0 && nextSquare!= 0)) ) {
+                    if (currentSquare != 0 && nextSquare != 0)
+                        score += Math.pow(3, Math.log((additionSquare) / 3) / Math.log(2) + 1);
+                    grid.get(i).set(j, additionSquare);
                     changed[i] = true;
-                } else if(changed[i]){
-                    current.set(j, current.get(j+1));
+                } else if (changed[i]) {
+                    grid.get(i).set(j, nextSquare);
                 }
-            if(changed[i]) {current.set(3,0);}
-            grid.set(i,current);
+            }
+            if(changed[i])
+            {
+                grid.get(i).set(3, 0);
+            }
         }
         //add new tile if the grid was changed
         if(changed[0] || changed[1] || changed[2] || changed[3]) {
@@ -65,94 +72,59 @@ public class Simulator {
 
     public void moveRight()
     {
-        boolean[] changed = {false,false,false,false};
-        //shifts everything right
-        for(int i=0; i<4; ++i)
-        {
-            ArrayList<Integer> current = grid.get(i);
-            for(int j=3;j>0;--j)
-                if(!changed[i] && ((current.get(j).equals(current.get(j-1)) && current.get(j)>2) || (current.get(j)+current.get(j-1)==3) || current.get(j)==0)) {
-                    if ((current.get(j).equals(current.get(j-1)) && current.get(j)>2) || (current.get(j)+current.get(j-1)==3))
-                        score+=Math.pow(3,Math.log((current.get(j)+current.get(j-1))/3)/Math.log(2)+1);
-                    current.set(j, current.get(j)+current.get(j-1));
-                    changed[i] = true;
-                } else if(changed[i]){
-                    current.set(j, current.get(j-1));
-                }
-            if(changed[i]) {current.set(0,0);}
-            grid.set(i,current);
-        }
-        //add new tile
-        if(changed[0] || changed[1] || changed[2] || changed[3]) {
-            int newTileLocation;
-            do{
-                newTileLocation = (int)(Math.random()*4);
-            } while (!changed[newTileLocation]);
-            grid.get(newTileLocation).set(0,nextTile);
-            nextTile = randomTile();
-        }
+        flipGrid();
+        moveLeft();
+        flipGrid();
     }
 
     public void moveUp()
     {
-        boolean[] changed = {false,false,false,false};
-        //shifts everything up
-        for(int j=0; j<4; ++j)
-        {
-            for(int i=0;i<3;++i)
-                if(!changed[j] && ((grid.get(i).get(j).equals(grid.get(i+1).get(j)) && grid.get(i).get(j)>2) || (grid.get(i).get(j)+grid.get(i+1).get(j)==3) || grid.get(i).get(j)==0)) {
-                    if ((grid.get(i).get(j).equals(grid.get(i+1).get(j)) && grid.get(i).get(j)>2) || (grid.get(i).get(j)+grid.get(i+1).get(j)==3))
-                        score+=Math.pow(3,Math.log((grid.get(i).get(j)+grid.get(i+1).get(j))/3)/Math.log(2)+1);
-                    grid.get(i).set(j, grid.get(i).get(j) + grid.get(i + 1).get(j));
-                    changed[j] = true;
-                } else if(changed[j]){
-                    grid.get(i).set(j, grid.get(i + 1).get(j));
-                }
-            if(changed[j]) {grid.get(3).set(j, 0);}
-        }
-        //add new tile
-        if(changed[0] || changed[1] || changed[2] || changed[3]) {
-            int newTileLocation;
-            do{
-                newTileLocation = (int)(Math.random()*4);
-            } while (!changed[newTileLocation]);
-            grid.get(3).set(newTileLocation,nextTile);
-            nextTile = randomTile();
-        }
+        transpose();
+        moveLeft();
+        transpose();
     }
 
     public void moveDown()
     {
-        boolean[] changed = {false,false,false,false};
-        //shifts everything down
-        for(int j=0; j<4; ++j)
-        {
-            for(int i=3;i>0;--i)
-                if(!changed[j] && ((grid.get(i).get(j).equals(grid.get(i-1).get(j)) && grid.get(i).get(j)>2) || (grid.get(i).get(j)+grid.get(i-1).get(j)==3) || grid.get(i).get(j)==0)) {
-                    if ((grid.get(i).get(j).equals(grid.get(i-1).get(j)) && grid.get(i).get(j)>2) || (grid.get(i).get(j)+grid.get(i-1).get(j)==3))
-                        score+=Math.pow(3,Math.log((grid.get(i).get(j)+grid.get(i-1).get(j))/3)/Math.log(2)+1);
-                    grid.get(i).set(j, grid.get(i).get(j)+grid.get(i-1).get(j));
-                    changed[j] = true;
-                } else if(changed[j]){
-                    grid.get(i).set(j, grid.get(i-1).get(j));
-                }
-            if(changed[j]) {grid.get(0).set(j,0);}
-        }
-        //add new tile
-        if(changed[0] || changed[1] || changed[2] || changed[3]) {
-            int newTileLocation;
-            do{
-                newTileLocation = (int)(Math.random()*4);
-            } while (!changed[newTileLocation]);
-            grid.get(0).set(newTileLocation,nextTile);
-            nextTile = randomTile();
-        }
+        transpose();
+        flipGrid();
+        moveLeft();
+        flipGrid();
+        transpose();
     }
 
-    public ArrayList<ArrayList<Integer>> getThreesGrid()
+    public void save()
     {
-        return grid;
+        undoStack.push(grid);
     }
+
+    public void undo()
+    {
+        grid = undoStack.pop();
+    }
+
+    private void flipGrid()
+    {
+        for (ArrayList<Integer> list : grid)
+            Collections.reverse(list);
+    }
+
+    private void transpose()
+    {
+        ArrayList<ArrayList<Integer>> temp = new ArrayList<ArrayList<Integer>>();
+        for(int i = 0; i<4; ++i)
+        {
+            ArrayList<Integer> col = new ArrayList<Integer>();
+            for(int j = 0; j<4; ++j)
+            {
+                col.add(grid.get(j).get(i));
+            }
+            temp.add(col);
+        }
+        grid = temp;
+    }
+
+    public ArrayList<ArrayList<Integer>> getThreesGrid() { return grid; }
 
     public int getNextTile() { return nextTile; }
 
@@ -164,20 +136,27 @@ public class Simulator {
         boolean live = false;
         for(int i=0; i<4; ++i)
         {
-            ArrayList<Integer> current = grid.get(i);
-            for(int j = 0; j < 3; ++j)
-                if((current.get(j).equals(current.get(j+1)) && current.get(j)>2) || (current.get(j)+current.get(j+1)==3) || current.get(j)==0) {
+            for(int j = 0; j < 3; ++j) {
+                Integer currentSquare = grid.get(i).get(j);
+                Integer nextSquare = grid.get(i).get(j + 1);
+                Integer additionSquare = currentSquare + nextSquare;
+                if ((additionSquare % 3 == 0 && isPowerOfTwo((additionSquare) / 3)) || (currentSquare == 0 && nextSquare != 0)) {
                     live = true;
                     break;
                 }
+            }
         }
         if(!live) {
             for(int j=0; j<4; ++j) {
-                for (int i = 0; i < 3; ++i)
-                    if (((grid.get(i).get(j).equals(grid.get(i + 1).get(j)) && grid.get(i).get(j) > 2) || (grid.get(i).get(j) + grid.get(i + 1).get(j) == 3) || grid.get(i).get(j) == 0)) {
+                for (int i = 0; i < 3; ++i) {
+                    Integer currentSquare = grid.get(i).get(j);
+                    Integer nextSquare = grid.get(i + 1).get(j);
+                    Integer additionSquare = currentSquare + nextSquare;
+                    if ((additionSquare % 3 == 0 && isPowerOfTwo((additionSquare) / 3)) || (currentSquare == 0 && nextSquare != 0)) {
                         live = true;
                         break;
                     }
+                }
             }
         }
         return live;
@@ -200,5 +179,10 @@ public class Simulator {
             ++balanceOneTwo;
         }
         return value;
+    }
+
+    private boolean isPowerOfTwo(int x)
+    {
+        return (x & (x-1)) == 0;
     }
 }

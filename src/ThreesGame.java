@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferStrategy;
 import javax.swing.JFrame;
 
 public class ThreesGame extends Canvas {
@@ -47,7 +48,7 @@ public class ThreesGame extends Canvas {
         g.drawString(sim.getScore()+"",WIDTH-BOX_SIZE+BOX_SIZE/2,BOX_SIZE*3/2);
         if(!sim.isAlive())
         {
-            g.drawString("YOU LOST",WIDTH/2,HEIGHT/2);
+            g.drawString("YOU LOST",WIDTH-300,HEIGHT-50);
         }
     }
 
@@ -66,20 +67,27 @@ public class ThreesGame extends Canvas {
 
     public void moveIt(KeyEvent evt) {
         switch (evt.getKeyCode()) {
-            case KeyEvent.VK_DOWN:
+            case KeyEvent.VK_DOWN: case KeyEvent.VK_S:
                 sim.moveDown();
+                sim.save();
                 break;
-            case KeyEvent.VK_UP:
+            case KeyEvent.VK_UP: case KeyEvent.VK_W:
                 sim.moveUp();
+                sim.save();
                 break;
-            case KeyEvent.VK_LEFT:
+            case KeyEvent.VK_LEFT: case KeyEvent.VK_A:
                 sim.moveLeft();
+                sim.save();
                 break;
-            case KeyEvent.VK_RIGHT:
+            case KeyEvent.VK_RIGHT: case KeyEvent.VK_D:
                 sim.moveRight();
+                sim.save();
                 break;
             case KeyEvent.VK_R:
                 sim = new Simulator();
+                break;
+            case KeyEvent.VK_Z:
+                sim.undo();
                 break;
         }
         repaint();
