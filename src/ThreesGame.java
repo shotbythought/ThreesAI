@@ -34,10 +34,11 @@ public class ThreesGame extends Canvas {
                 g.fillRect(BOX_SIZE*j,BOX_SIZE*i,BOX_SIZE,BOX_SIZE);
                 g.setColor(Color.BLACK);
                 if (value != 0) {
-                    g.drawString(value + "", BOX_SIZE * j + BOX_SIZE / 2, BOX_SIZE * i + BOX_SIZE / 2);
+                    g.drawString(value + "", BOX_SIZE * j + BOX_SIZE / 2 - 15, BOX_SIZE * i + BOX_SIZE / 2);
                 }
             }
         }
+        //nextTile
         int value = sim.getNextTile();
         g.setColor(getTileColor(value));
         g.fillRect(BOX_SIZE*4+10,0,BOX_SIZE,BOX_SIZE);
