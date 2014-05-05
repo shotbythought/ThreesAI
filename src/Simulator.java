@@ -7,6 +7,7 @@ public class Simulator {
     private int balanceOneTwo;
     private int score;
     private Deque<ArrayList<ArrayList<Integer>>> undoStack = new ArrayDeque<ArrayList<ArrayList<Integer>>>();
+    private Deque<Integer> undoScoreStack = new ArrayDeque<Integer>();
 
     @SuppressWarnings("unchecked")
     public Simulator()
@@ -31,11 +32,28 @@ public class Simulator {
             grid.get(current/4).set(current%4,randomTile());
         }
         nextTile = randomTile();
-        undoStack.push(grid);
     }
 
-    //CHANGE THESE
-    public void moveLeft()
+    public void move(int direction)
+    {
+        save();
+        switch(direction){
+            case 'l':
+                moveLeft();
+                break;
+            case 'r':
+                moveRight();
+                break;
+            case 'd':
+                moveDown();
+                break;
+            case 'u':
+                moveUp();
+                break;
+        }
+    }
+
+    private void moveLeft()
     {
         boolean[] changed = {false,false,false,false};
         //shifts everything left
@@ -70,21 +88,21 @@ public class Simulator {
         }
     }
 
-    public void moveRight()
+    private void moveRight()
     {
         flipGrid();
         moveLeft();
         flipGrid();
     }
 
-    public void moveUp()
+    private void moveUp()
     {
         transpose();
         moveLeft();
         transpose();
     }
 
-    public void moveDown()
+    private void moveDown()
     {
         transpose();
         flipGrid();
@@ -96,11 +114,16 @@ public class Simulator {
     public void save()
     {
         undoStack.push(grid);
+        undoScoreStack.push(score);
     }
 
     public void undo()
     {
-        grid = undoStack.pop();
+        if (undoStack.size()!=0)
+        {
+            grid = undoStack.pop();
+            score = undoScoreStack.pop();
+        }
     }
 
     private void flipGrid()

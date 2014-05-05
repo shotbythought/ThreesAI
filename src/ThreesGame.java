@@ -1,7 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferStrategy;
-import javax.swing.JFrame;
+//import java.awt.image.BufferStrategy;
+import javax.swing.*;
 
 public class ThreesGame extends Canvas {
 
@@ -25,7 +25,7 @@ public class ThreesGame extends Canvas {
     }
 
     public void paint(Graphics g) {
-        g.setFont(new Font("Helvetica",Font.BOLD, 30));
+        g.setFont(new Font("TimesNewRoman",Font.BOLD, 30));
         for(int i = 0; i<4; ++i)
         {
             for(int j = 0; j<4; ++j)
@@ -45,7 +45,8 @@ public class ThreesGame extends Canvas {
         g.fillRect(BOX_SIZE*4+10,0,BOX_SIZE,BOX_SIZE);
         g.setColor(Color.BLACK);
         g.drawString(value+"",WIDTH-BOX_SIZE+BOX_SIZE/2,BOX_SIZE/2);
-        g.drawString(sim.getScore()+"",WIDTH-BOX_SIZE+BOX_SIZE/2,BOX_SIZE*3/2);
+        g.drawString("Score:",WIDTH-BOX_SIZE+10,BOX_SIZE*3/2);
+        g.drawString(sim.getScore()+"",WIDTH-BOX_SIZE+BOX_SIZE/2,BOX_SIZE*2);
         if(!sim.isAlive())
         {
             g.drawString("YOU LOST",WIDTH-300,HEIGHT-50);
@@ -68,20 +69,16 @@ public class ThreesGame extends Canvas {
     public void moveIt(KeyEvent evt) {
         switch (evt.getKeyCode()) {
             case KeyEvent.VK_DOWN: case KeyEvent.VK_S:
-                sim.moveDown();
-                sim.save();
+                sim.move('d');
                 break;
             case KeyEvent.VK_UP: case KeyEvent.VK_W:
-                sim.moveUp();
-                sim.save();
+                sim.move('u');
                 break;
             case KeyEvent.VK_LEFT: case KeyEvent.VK_A:
-                sim.moveLeft();
-                sim.save();
+                sim.move('l');
                 break;
             case KeyEvent.VK_RIGHT: case KeyEvent.VK_D:
-                sim.moveRight();
-                sim.save();
+                sim.move('r');
                 break;
             case KeyEvent.VK_R:
                 sim = new Simulator();
@@ -96,7 +93,7 @@ public class ThreesGame extends Canvas {
     public static void main(String[] args) {
         JFrame frame = new JFrame(TITLE);
         ThreesGame gm = new ThreesGame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.getContentPane().add(gm);
         frame.pack();
         frame.setVisible(true);
