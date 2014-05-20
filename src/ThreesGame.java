@@ -30,7 +30,7 @@ public class ThreesGame extends Canvas {
         {
             for(int j = 0; j<4; ++j)
             {
-                int value = sim.getThreesGrid().get(i).get(j);
+                int value = sim.getCurrent().getThreesGrid().get(i).get(j);
                 g.setColor(getTileColor(value));
                 g.fillRect(BOX_SIZE*j,BOX_SIZE*i,BOX_SIZE,BOX_SIZE);
                 g.setColor(Color.BLACK);
@@ -40,14 +40,14 @@ public class ThreesGame extends Canvas {
             }
         }
         //nextTile
-        int value = sim.getNextTile();
+        int value = sim.getCurrent().getNextTile();
         g.setColor(getTileColor(value));
         g.fillRect(BOX_SIZE*4+10,0,BOX_SIZE,BOX_SIZE);
         g.setColor(Color.BLACK);
         g.drawString(value+"",WIDTH-BOX_SIZE+BOX_SIZE/2,BOX_SIZE/2);
         g.drawString("Score:",WIDTH-BOX_SIZE+10,BOX_SIZE*3/2);
-        g.drawString(sim.getScore()+"",WIDTH-BOX_SIZE+BOX_SIZE/2,BOX_SIZE*2);
-        if(!sim.isAlive())
+        g.drawString(sim.getCurrent().getScore()+"",WIDTH-BOX_SIZE+BOX_SIZE/3,BOX_SIZE*2);
+        if(!sim.getCurrent().isAlive())
         {
             g.drawString("YOU LOST",WIDTH-300,HEIGHT-50);
         }
@@ -85,6 +85,12 @@ public class ThreesGame extends Canvas {
                 break;
             case KeyEvent.VK_Z:
                 sim.undo();
+                break;
+            case KeyEvent.VK_I:
+                sim.artificialMove();
+                break;
+            case KeyEvent.VK_U:
+                sim.runArtificial();
                 break;
         }
         repaint();
